@@ -1,0 +1,17 @@
+<%- include("partials/header"); -%>
+<section class="homesection">
+    <div class="innersection">
+     <div class="container">
+        <form class="form" action="/api/v1/auth/login" method="post">
+          <label for="email">Email:</label><br>
+          <input type="email" id="email" name="email"><br>
+
+          <label for="password">Password:</label><br>
+          <input type="password" id="password" name="password"><br><br>
+          
+          <input type="submit" value="Log In">
+      </form>
+     </div>
+    </div>
+  </section>
+<%- include("partials/footer"); -%>

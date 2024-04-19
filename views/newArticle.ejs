@@ -1,0 +1,25 @@
+<%- include("partials/header"); -%>
+<section class="homesection">
+  <div class="innersection">
+   <div class="container">
+      <form class="form" action="/rab/new" method="post">
+        
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+
+        <label for="description">Description:</label><br>
+        <input type="text" id="description" name="description"><br>
+
+        <label for="body">Body:</label><br>
+        <textarea id="body" name="body" id="body" name="body"></textarea><br>
+        
+        <label for="tags"> Tags:</label><br>
+        <input type="text" id="tags" name="tags"><br>
+
+        <input type="submit" value="Create"><br><br>
+        <a href="/rab/articles" class="goback" style="background-color:rgb(104, 67, 78);">Cancel</a>
+    </form>
+   </div>
+  </div>
+</section>
+<%- include("partials/footer"); -%>

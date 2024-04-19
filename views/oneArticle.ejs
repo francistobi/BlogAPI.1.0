@@ -1,0 +1,31 @@
+<%- include("partials/header"); -%>
+<div class="box">
+  <h2>
+    <%= article.title %> by <%= article.author%><span
+      >< <%= article.state%> ></span
+    >
+  </h2>
+  <h3><%= article.description %></h3>
+  <h4><%= article.timestamp.toLocaleDateString()%></h4>
+  <p class="bodyy"><%= article.body %></p>
+  <p class="tagss"><span>Tags: </span><%= article.tags%></p>
+  <p class="tagss"><span>Read Count:</span> <%= article.read_count%></p>
+  <div class="blw">
+    <a href="/api/v1/blog/" style="color: blue; border: 2px solid blue">All Articles</a>
+    <a
+      href="/api/v1/blog/edit/<%=article.id%>"
+      style="color: rgb(104, 67, 78); border: 2px solid rgb(104, 67, 78)"
+      >Edit</a
+    >
+    <form action="/api/v1/blog/<%=article.id%>?_method=DELETE" method="POST">
+      <button
+        class="del"
+        type="submit"
+        style="color: rgb(161, 12, 57); border: 2px solid rgb(161, 12, 57)"
+      >
+        Delete
+      </button>
+    </form>
+  </div>
+</div>
+<%- include("partials/footer"); -%>
