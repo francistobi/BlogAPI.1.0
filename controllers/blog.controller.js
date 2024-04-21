@@ -70,12 +70,32 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
 });
 
 const createBlog = asyncWrapper(async (req, res) => {
-  const read_time = Math.ceil(req.body.body.length / AVERAGE_WORDS_PER_MINUTE);
-  req.body.state = "draft";
-  req.body.reading_time = read_time;
-  const newBlog = await Blog.create(req.body);
-  res.status(201).json({message:"success!",  newBlog });
+  const { title, description, body, tags } = req.body;
+  const user = req.user.id;
+  
+  const read_time = Math.ceil(body.length / AVERAGE_WORDS_PER_MINUTE);
+ const authorName = req.body.author.split(" ")
+ const firstname= authorName[0]
+ const lastname = authorName[1]
+ const author = await UserModel.findOne({ _id:user });
+ const Author = author._id
+  if (!author) {
+    return res.status(404).json({ error: "Author not found" });
+  }
+  const newBlog = await Blog.create({
+    title,
+    description,
+    body,
+    tags,
+    state: "draft",
+    reading_time: read_time,
+    author: Author,
+  });
+
+  res.status(201).json({ message: "Blog created successfully!", newBlog });
 });
+
+
 
 const show_oneblog = async (req, res) => {
   const id = req.params.id;
