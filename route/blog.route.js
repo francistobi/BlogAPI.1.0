@@ -32,7 +32,7 @@ blogRouter.get("/:id/drafts", authenticateToken, getDraftBlog);
 blogRouter.get("/:id/myblogs", authenticateToken, show_myBlog);
 blogRouter.get("/:id", show_oneblog)
 blogRouter.get("/:userId/me", authenticateToken, getUserBlogsHandler);
-blogRouter.put("/edit/:id", authenticateToken, editForm);
+blogRouter.put("/edit/:id", authenticateToken, editForm)
 blogRouter.get("/edit/:id", authenticateToken, get_editForm);
 blogRouter.delete("/:id", authenticateToken, deleteBlog);
 

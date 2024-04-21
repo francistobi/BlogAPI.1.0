@@ -55,6 +55,7 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
   const publishedBlog = await Blog.find({ state: "Published" })
     .skip((page - 1) * limit)
     .limit(limit);
+    res.render("published", { articles: publishedBlog });
   if (!publishedBlog) {
     const error = new Error();
     error.status = 400;
@@ -66,7 +67,6 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
     totalPages: totalPages,
     totalBlogs: totalBlogs,
   });
-  // res.render("published", { article: publishedBlog });
 });
 
 const createBlog = asyncWrapper(async (req, res) => {
@@ -75,8 +75,6 @@ const createBlog = asyncWrapper(async (req, res) => {
   
   const read_time = Math.ceil(body.length / AVERAGE_WORDS_PER_MINUTE);
  const authorName = req.body.author.split(" ")
- const firstname= authorName[0]
- const lastname = authorName[1]
  const author = await UserModel.findOne({ _id:user });
  const Author = author._id
   if (!author) {
