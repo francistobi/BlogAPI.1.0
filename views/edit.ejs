@@ -1,7 +1,7 @@
 <%- include("partials/header"); -%>
-<section class="homesection">
+<section class="homesection" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
   <div class="innersection">
-   <div class="container">
+    <div class="container">
       <form class="form" action="/api/v1/blog/edit/<%=article.id%>?_method=PUT" method="POST">
         
         <label for="title">Title:</label><br>
@@ -11,7 +11,7 @@
         <input type="text" id="description" name="description" required><br>
 
         <label for="body">Body:</label><br>
-        <textarea id="body" name="body" id="body" name="body" required></textarea><br>
+        <textarea id="body" name="body" required></textarea><br>
         
         <label for="tags"> Tags:</label><br>
         <input type="text" id="tags" name="tags" required><br>
@@ -21,8 +21,8 @@
 
         <button type="submit" class="edt">Edit</button>
         <a href="/api/v1/blog/<%=article.id%>" class="goback" style="background-color:rgb(104, 67, 78);">Cancel</a>
-    </form>
-   </div>
+      </form>
+    </div>
   </div>
 </section>
 <%- include("partials/footer"); -%>
