@@ -7,10 +7,6 @@ const { createCustomError } = require("../error/custom-error");
 
 const AVERAGE_WORDS_PER_MINUTE = 215;
 
-// const getAllBlog = asyncWrapper(async (req, res) => {
-//   const blogs = await Blog.find({});
-//   res.status(200).json({ blogs });
-// });
 
 const getDraftBlog = asyncWrapper(async (req, res, next) => {
   const userId = req.params.id;
@@ -68,7 +64,6 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
     totalBlogs: totalBlogs,
   });
 });
-
 const createBlog = asyncWrapper(async (req, res) => {
   const { title, description, body, tags } = req.body;
   const user = req.user.id;
@@ -188,17 +183,17 @@ const deleteBlog = asyncWrapper(async (req, res,next) => {
   res.redirect("/api/v1/blog/");
 });
 
-const show_blog = asyncWrapper(async (req, res) => {
-  const blog = await Blog.find({ state: "published" });
-  res.render("articles", { articles: blog });
-})
-
 const getUserBlogsHandler = asyncWrapper(async (req, res, next) => {
   const userId = req.params.userId;
   const user = req.user.id;
   const blogs = await getUserBlogs(userId);
   blogs.read_count + 1;
 
+  if (!blogs) {
+    const error = new Error();
+    error.status = 400;
+    return next(createCustomError(`no blog`, error.status));
+  }
    if (user !== userId ) {
       const error = new Error();
       error.status = 401;
@@ -219,31 +214,32 @@ const getUserBlogsHandler = asyncWrapper(async (req, res, next) => {
 
 const show_myBlog = async(req,res)=>{
   const userId = req.params.id;
-    const draftBlog = await Blog.find({ state: "draft", author: userId });
+  //  const user = req.user.id;
+   console.log(user)
+    const draftBlog = await Blog.find({ state: "draft", author: user });
     if (!draftBlog) {
       const error = new Error();
       error.status = 400;
       return next(createCustomError(`no draft blog`, error.status));
     }
-    res.status(200).json({ draftBlog });
-  // res.render("mybooks", { articles: draftBlog });
+    res.render("mybooks", { articles: draftBlog });
 }
 
-// const sortBlog= asyncWrapper(async (req, res, next) => {
-//   let query = Blog.find();
+const sortBlog= asyncWrapper(async (req, res, next) => {
+  let query = Blog.find();
 
-//   if (req.query.sortBy) {
-//     const sortBy = req.query.sortBy;
-//     if (sortBy === "read_count" || sortBy === "reading_time" || sortBy === "timestamp") {
-//       query = query.sort({ [sortBy]: 1 });
-//     } else if (sortBy === "-read_count" || sortBy === "-reading_time" || sortBy === "-timestamp") {
-//       query = query.sort({ [sortBy.slice(1)]: -1 });
-//     }
-//   }
-//   const blogs = await query;
+  if (req.query.sortBy) {
+    const sortBy = req.query.sortBy;
+    if (sortBy === "read_count" || sortBy === "reading_time" || sortBy === "timestamp") {
+      query = query.sort({ [sortBy]: 1 });
+    } else if (sortBy === "-read_count" || sortBy === "-reading_time" || sortBy === "-timestamp") {
+      query = query.sort({ [sortBy.slice(1)]: -1 });
+    }
+  }
+  const blogs = await query;
 
-//   res.status(200).json({ blogs });
-// });
+  res.status(200).json({ blogs });
+});
 
 module.exports = {
   getDraftBlog,
@@ -256,8 +252,8 @@ module.exports = {
   editForm,
   get_editForm,
   deleteBlog,
-  show_blog,
   show_create,
   getUserBlogsHandler,
   show_myBlog,
+  sortBlog,
 };

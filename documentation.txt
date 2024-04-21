@@ -1,0 +1,101 @@
+# Blog Router Documentation
+
+## Introduction
+This document outlines the endpoints provided by the Blog Router module in the application.
+
+## Module Overview
+The Blog Router module defines the routes for accessing various functionalities related to managing blogs. These endpoints allow users to perform operations such as fetching blogs, creating new blogs, editing existing blogs, and deleting blogs.
+
+## Endpoints
+
+### GET /api/v1/blog
+- **Description:** Retrieves published blogs.
+- **Query Parameters:**
+  - `page`: Specifies the page number of the results (default: 1).
+  - `limit`: Specifies the number of blogs per page (default: 20).
+- **Authentication:** Not required.
+- **Response:** JSON response containing published blogs paginated according to the specified parameters.
+
+### GET /api/v1/blog/author
+- **Description:** Fetches blogs authored by a specific author.
+- **Query Parameters:**
+  - `author`: Author name.
+- **Authentication:** Not required.
+- **Response:** JSON response containing blogs authored by the specified author.
+
+### GET /api/v1/blog/title
+- **Description:** Fetches blogs with a specific title.
+- **Query Parameters:**
+  - `title`: Title of the blog.
+- **Authentication:** Not required.
+- **Response:** JSON response containing blogs with the specified title.
+
+### GET /api/v1/blog/tag
+- **Description:** Fetches blogs with specific tags.
+- **Query Parameters:**
+  - `tag`: Tag associated with the blog.
+- **Authentication:** Not required.
+- **Response:** JSON response containing blogs with the specified tag.
+
+### GET /api/v1/blog/sort
+- **Description:** Sorts blogs based on specified criteria.
+- **Query Parameters:**
+  - `sortBy`: Specifies the field to sort by and the sorting order (e.g., `read_count`, `-reading_time`).
+- **Authentication:** Not required.
+- **Response:** JSON response containing sorted blogs.
+
+### POST /api/v1/blog/new
+- **Description:** Creates a new blog.
+- **Authentication:** Required (Bearer token).
+- **Request Body:**
+  - `title`: Title of the blog.
+  - `description`: Description of the blog.
+  - `body`: Content of the blog.
+  - `tags`: Tags associated with the blog.
+- **Response:** JSON response confirming the successful creation of the blog.
+
+### GET /api/v1/blog/n
+- **Description:** Renders a view template for creating a new blog.
+- **Authentication:** Required (Bearer token).
+
+### GET /api/v1/blog/:id/drafts
+- **Description:** Fetches draft blogs authored by a specific user.
+- **Authentication:** Required (Bearer token).
+- **Response:** JSON response containing draft blogs paginated according to the specified parameters.
+
+### GET /api/v1/blog/:id/myblogs
+- **Description:** Fetches draft blogs authored by the authenticated user.
+- **Authentication:** Required (Bearer token).
+- **Response:** Renders a view template displaying draft blogs authored by the authenticated user.
+
+### GET /api/v1/blog/:id
+- **Description:** Fetches a single blog by its ID.
+- **Authentication:** Not required.
+- **Response:** Renders a view template displaying the fetched blog.
+
+### GET /api/v1/blog/:userId/me
+- **Description:** Fetches blogs authored by a specific user.
+- **Authentication:** Required (Bearer token).
+- **Response:** Renders a view template displaying blogs authored by the specified user.
+
+### PUT /api/v1/blog/edit/:id
+- **Description:** Edits an existing blog.
+- **Authentication:** Required (Bearer token).
+- **Request Body:**
+  - `title`: Updated title of the blog.
+  - `description`: Updated description of the blog.
+  - `body`: Updated content of the blog.
+  - `tags`: Updated tags associated with the blog.
+- **Response:** Redirects to the edit form for the updated blog.
+
+### GET /api/v1/blog/edit/:id
+- **Description:** Renders a view template for editing an existing blog.
+- **Authentication:** Required (Bearer token).
+
+### DELETE /api/v1/blog/:id
+- **Description:** Deletes an existing blog.
+- **Authentication:** Required (Bearer token).
+- **Response:** Redirects to the list of blogs after successful deletion.
+
+## Conclusion
+The Blog Router module provides endpoints for managing blogs within the application. These endpoints allow users to perform CRUD operations on blogs and retrieve blog-related information.
