@@ -23,17 +23,17 @@ const {
 // blogRouter.get("/", getAllBlog);
 // blogRouter.get("/", sortBlog);
 blogRouter.get("/", getBlogs);
+blogRouter.get("/author",getByAuthor);
+blogRouter.get("/title", getByTitle);
+blogRouter.get("/tag",  getByTags)
 blogRouter.post("/new", authenticateToken, createBlog);
 blogRouter.get("/n", authenticateToken, show_create);
 blogRouter.get("/:id/drafts", authenticateToken, getDraftBlog);
 blogRouter.get("/:id/myblogs", authenticateToken, show_myBlog);
-blogRouter.get("/author", authenticateToken, getByAuthor);
-blogRouter.get("/title", authenticateToken, getByTitle);
-blogRouter.get("/tag", authenticateToken, getByTags)
 blogRouter.get("/:id", show_oneblog)
 blogRouter.get("/:userId/me", authenticateToken, getUserBlogsHandler);
 blogRouter.put("/edit/:id", authenticateToken, editForm);
 blogRouter.get("/edit/:id", authenticateToken, get_editForm);
-blogRouter.delete("/:blogid/:id", authenticateToken, deleteBlog);
+blogRouter.delete("/:id", authenticateToken, deleteBlog);
 
 module.exports = blogRouter;

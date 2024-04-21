@@ -14,24 +14,58 @@ const AVERAGE_WORDS_PER_MINUTE = 215;
 
 const getDraftBlog = asyncWrapper(async (req, res, next) => {
   const userId = req.params.id;
-  // const user = user.id
-  const draftBlog = await Blog.find({ state: "draft", author: userId});
+  const user = req.user.id;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const totalBlogs = await Blog.countDocuments();
+  const totalPages = Math.ceil(totalBlogs / limit);
+  const draftBlog = await Blog.find({ state: "draft", author: userId })
+    .skip((page - 1) * limit)
+    .limit(limit);
   if (!draftBlog) {
     const error = new Error();
     error.status = 400;
     return next(createCustomError(`no draft blog`, error.status));
   }
-  res.status(200).json({ draftBlog });
+  if (user !== userId) {
+    const error = new Error();
+    error.status = 401;
+    return next(
+      createCustomError(
+        `You do not have permission to get others draft blog.`,
+        error.status
+      )
+    );
+  }
+  res
+    .status(200)
+    .json({
+      draftBlog,
+      currentPage: page,
+      totalPages: totalPages,
+      totalBlogs: totalBlogs,
+    });
 });
 
 const getBlogs = asyncWrapper(async (req, res, next) => {
-  const publishedBlog = await Blog.find({ state: "published" });
+   const page = parseInt(req.query.page) || 1; 
+  const limit = parseInt(req.query.limit) || 20
+  const totalBlogs = await Blog.countDocuments();
+  const totalPages = Math.ceil(totalBlogs / limit);
+  const publishedBlog = await Blog.find({ state: "Published" })
+    .skip((page - 1) * limit)
+    .limit(limit);
   if (!publishedBlog) {
     const error = new Error();
     error.status = 400;
     return next(createCustomError(`no published blogs`, error.status));
   }
-  res.json({publishedBlog})
+  res.json({
+    publishedBlog,
+    currentPage: page,
+    totalPages: totalPages,
+    totalBlogs: totalBlogs,
+  });
   // res.render("published", { article: publishedBlog });
 });
 
@@ -40,19 +74,14 @@ const createBlog = asyncWrapper(async (req, res) => {
   req.body.state = "draft";
   req.body.reading_time = read_time;
   const newBlog = await Blog.create(req.body);
-  res.status(201).json({ newBlog });
-});
-
-const publishBlog = asyncWrapper(async (req, res) => {
-  const id = req.query.id;
-  const blogToPublish = await Blog.findone({id});
-
-
+  res.status(201).json({message:"success!",  newBlog });
 });
 
 const show_oneblog = async (req, res) => {
   const id = req.params.id;
   const blog = await Blog.findById(id);
+  blog.read_count += 1; // Increment the read_count by 1
+  await blog.save();
   res.render("oneArticle", { article: blog });
 };
 
@@ -91,8 +120,6 @@ const getByTitle = asyncWrapper(async (req, res, next) => {
 
 const getByTags = asyncWrapper(async (req, res, next) => {
   const tag = req.query.tag;
-  const user = req.user; 
-  console.log(user)
   const blogs = await Blog.find({ tags: tag });
   if (!blogs || blogs.length === 0) {
     const error = new Error();
@@ -137,19 +164,8 @@ const get_editForm = async (req, res) => {
   res.render("edit", { article: blog });
 };
 
-const deleteBlog = asyncWrapper(async (req, res) => {
-  const user = req.user.id;
+const deleteBlog = asyncWrapper(async (req, res,next) => {
   const id = req.params.id;
-     if (user !== id) {
-       const error = new Error();
-       error.status = 401;
-       return next(
-         createCustomError(
-           `You do not have permission to delete this blog.`,
-           error.status
-         )
-       );
-     }
   await Blog.findByIdAndDelete(id);
   res.redirect("/api/v1/blog/");
 });
@@ -160,7 +176,7 @@ const show_blog = asyncWrapper(async (req, res) => {
 })
 
 const getUserBlogsHandler = asyncWrapper(async (req, res, next) => {
-  const userId = req.params.userId; // Assuming userId is passed in the request params
+  const userId = req.params.userId;
   const user = req.user.id;
   const blogs = await getUserBlogs(userId);
   blogs.read_count + 1;
@@ -180,7 +196,6 @@ const getUserBlogsHandler = asyncWrapper(async (req, res, next) => {
     error.status = 404;
     return next(createCustomError(`No blog found`, error.status));
   }
-  // res.json(blogs);
   res.render("mybooks", { articles: blogs });
 });
 
@@ -216,7 +231,6 @@ module.exports = {
   getDraftBlog,
   getBlogs,
   createBlog,
-  publishBlog,
   getByAuthor,
   getByTitle,
   getByTags,
