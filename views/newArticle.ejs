@@ -1,27 +1,27 @@
 <%- include("partials/header"); -%>
-<section class="homesection">
+<section class="homesection" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
   <div class="innersection">
-   <div class="container">
+    <div class="container">
       <form class="form" action="/api/v1/blog/new" method="post">
-        
         <label for="title">Title:</label><br>
         <input type="text" id="title" name="title"><br>
-        <label for="title">Author:</label><br>
+        
+        <label for="author">Author:</label><br>
         <input type="text" id="author" name="author"><br>
 
         <label for="description">Description:</label><br>
         <input type="text" id="description" name="description"><br>
 
         <label for="body">Body:</label><br>
-        <textarea id="body" name="body" id="body" name="body"></textarea><br>
+        <textarea id="body" name="body"></textarea><br>
         
         <label for="tags"> Tags:</label><br>
         <input type="text" id="tags" name="tags"><br>
 
         <input type="submit" value="Create"><br><br>
         <a href="/api/v1/blog/" class="goback" style="background-color:rgb(104, 67, 78);">Cancel</a>
-    </form>
-   </div>
+      </form>
+    </div>
   </div>
 </section>
 <%- include("partials/footer"); -%>
