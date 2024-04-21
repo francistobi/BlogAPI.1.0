@@ -105,6 +105,8 @@ const getByTags = asyncWrapper(async (req, res, next) => {
 });
 
 const editForm = asyncWrapper(async (req, res) => {
+  const user = req.user.id;
+  const id = req.params.id;
   const read_count = read_count + 1 
   const { title, description, body, tags } = req.body;
   const blog = await Blog.findByIdAndUpdate(req.params.id, {
@@ -116,6 +118,17 @@ const editForm = asyncWrapper(async (req, res) => {
     timestamp: new Date(),
     read_count: read_count,
   });
+  
+   if (user !== id) {
+     const error = new Error();
+     error.status = 401;
+     return next(
+       createCustomError(
+         `You do not have permission to edit  this blog.`,
+         error.status
+       )
+     );
+   }
   res.redirect(`/api/v1/blog/edit/${blog.id}`);
 });
 
@@ -167,8 +180,21 @@ const getUserBlogsHandler = asyncWrapper(async (req, res, next) => {
     error.status = 404;
     return next(createCustomError(`No blog found`, error.status));
   }
-  res.json(blogs);
+  // res.json(blogs);
+  res.render("mybooks", { articles: blogs });
 });
+
+const show_myBlog = async(req,res)=>{
+  const userId = req.params.id;
+    const draftBlog = await Blog.find({ state: "draft", author: userId });
+    if (!draftBlog) {
+      const error = new Error();
+      error.status = 400;
+      return next(createCustomError(`no draft blog`, error.status));
+    }
+    res.status(200).json({ draftBlog });
+  // res.render("mybooks", { articles: draftBlog });
+}
 
 // const sortBlog= asyncWrapper(async (req, res, next) => {
 //   let query = Blog.find();
@@ -201,4 +227,5 @@ module.exports = {
   show_blog,
   show_create,
   getUserBlogsHandler,
+  show_myBlog,
 };
