@@ -7,23 +7,22 @@ const notFound = require("./middleware/not-found");
 const errorMiddleware = require("./middleware/error-handler");
 const cookieParser = require("cookie-parser");
 const methodOverride = require("method-override");
-
 const MONGODB_URL = process.env.MONGODB_URL;
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000
 
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(methodOverride("_method"));
+app.use(cookieParser())
+app.use(methodOverride("_method"))
 
-app.set("view engine", "ejs"); // setting view engine
-app.set("views", "views"); // setting views folder
+app.set("view engine", "ejs") // setting view engine
+app.set("views", "views") // setting views folder
 
-const authRoute = require("./route/auth.route");
-const blogRoute = require("./route/blog.route");
+const authRoute = require("./route/auth.route")
+const blogRoute = require("./route/blog.route")
 
 //route
 app.use("/api/v1/auth", authRoute);
@@ -47,4 +46,4 @@ const start = async () => {
     console.log(error);
   }
 };
-start();
+start()

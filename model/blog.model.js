@@ -12,7 +12,8 @@ const blogSchema = new mongoose.Schema({
     required: true,
   },
   author: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   state: {
@@ -22,12 +23,12 @@ const blogSchema = new mongoose.Schema({
   read_count: {
     type: Number,
     required: true,
-    default: 1,
+    default: 0,
   },
   reading_time: {
     type: Number,
     required: true,
-    default: 1,
+    default: 0,
   },
   tags: {
     type: String,

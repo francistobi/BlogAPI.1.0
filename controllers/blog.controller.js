@@ -1,6 +1,11 @@
 const Blog = require("../model/blog.model");
+const { getUserBlogs } = require("../services/blog.services");
+const UserModel = require("../model/user.model");
 const asyncWrapper = require("../middleware/async");
 const { createCustomError } = require("../error/custom-error");
+
+
+const AVERAGE_WORDS_PER_MINUTE = 215;
 
 // const getAllBlog = asyncWrapper(async (req, res) => {
 //   const blogs = await Blog.find({});
@@ -8,7 +13,9 @@ const { createCustomError } = require("../error/custom-error");
 // });
 
 const getDraftBlog = asyncWrapper(async (req, res, next) => {
-  const draftBlog = await Blog.find({ state: "draft" });
+  const userId = req.params.id;
+  // const user = user.id
+  const draftBlog = await Blog.find({ state: "draft", author: userId});
   if (!draftBlog) {
     const error = new Error();
     error.status = 400;
@@ -24,31 +31,34 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
     error.status = 400;
     return next(createCustomError(`no published blogs`, error.status));
   }
-  res.status(200).json({ publishedBlog });
+  res.json({publishedBlog})
+  // res.render("published", { article: publishedBlog });
 });
 
 const createBlog = asyncWrapper(async (req, res) => {
+  const read_time = Math.ceil(req.body.body.length / AVERAGE_WORDS_PER_MINUTE);
   req.body.state = "draft";
+  req.body.reading_time = read_time;
   const newBlog = await Blog.create(req.body);
   res.status(201).json({ newBlog });
 });
 
 const publishBlog = asyncWrapper(async (req, res) => {
-  const blogName = req.query.name;
-  const blogToPublish = await Blog.findone({ name: blogName });
-});
+  const id = req.query.id;
+  const blogToPublish = await Blog.findone({id});
 
+
+});
 
 const show_oneblog = async (req, res) => {
   const id = req.params.id;
   const blog = await Blog.findById(id);
-  if (!blog) {
-    return res.status(404).send("Blog not found");
-  }
-  res.render("oneArticle", { article: blog })
+  res.render("oneArticle", { article: blog });
 };
 
-
+const show_create = asyncWrapper(async (req, res, next) => {
+  res.render("newArticle");
+});
 
 const getByAuthor = asyncWrapper(async (req, res, next) => {
   const author = req.query.author;
@@ -81,6 +91,8 @@ const getByTitle = asyncWrapper(async (req, res, next) => {
 
 const getByTags = asyncWrapper(async (req, res, next) => {
   const tag = req.query.tag;
+  const user = req.user; 
+  console.log(user)
   const blogs = await Blog.find({ tags: tag });
   if (!blogs || blogs.length === 0) {
     const error = new Error();
@@ -93,6 +105,7 @@ const getByTags = asyncWrapper(async (req, res, next) => {
 });
 
 const editForm = asyncWrapper(async (req, res) => {
+  const read_count = read_count + 1 
   const { title, description, body, tags } = req.body;
   const blog = await Blog.findByIdAndUpdate(req.params.id, {
     title,
@@ -101,26 +114,62 @@ const editForm = asyncWrapper(async (req, res) => {
     body,
     tags,
     timestamp: new Date(),
-    read_count: 1,
+    read_count: read_count,
   });
   res.redirect(`/api/v1/blog/edit/${blog.id}`);
-})
+});
 
 const get_editForm = async (req, res) => {
   const blog = await Blog.findById(req.params.id);
   res.render("edit", { article: blog });
 };
 
-const deleteBlog =  asyncWrapper(async (req, res) => {
+const deleteBlog = asyncWrapper(async (req, res) => {
+  const user = req.user.id;
   const id = req.params.id;
+     if (user !== id) {
+       const error = new Error();
+       error.status = 401;
+       return next(
+         createCustomError(
+           `You do not have permission to delete this blog.`,
+           error.status
+         )
+       );
+     }
   await Blog.findByIdAndDelete(id);
-  res.redirect("/api/v1/blog/")
-})
+  res.redirect("/api/v1/blog/");
+});
 
 const show_blog = asyncWrapper(async (req, res) => {
   const blog = await Blog.find({ state: "published" });
-  res.render("articles", { articles: blog })
+  res.render("articles", { articles: blog });
 })
+
+const getUserBlogsHandler = asyncWrapper(async (req, res, next) => {
+  const userId = req.params.userId; // Assuming userId is passed in the request params
+  const user = req.user.id;
+  const blogs = await getUserBlogs(userId);
+  blogs.read_count + 1;
+
+   if (user !== userId ) {
+      const error = new Error();
+      error.status = 401;
+      return next(
+        createCustomError(
+          `You do not have permission to view this blog.`,
+          error.status
+        )
+      );
+    }
+  if (!blogs || blogs.length === 0) {
+    const error = new Error();
+    error.status = 404;
+    return next(createCustomError(`No blog found`, error.status));
+  }
+  res.json(blogs);
+});
+
 // const sortBlog= asyncWrapper(async (req, res, next) => {
 //   let query = Blog.find();
 
@@ -150,4 +199,6 @@ module.exports = {
   get_editForm,
   deleteBlog,
   show_blog,
+  show_create,
+  getUserBlogsHandler,
 };

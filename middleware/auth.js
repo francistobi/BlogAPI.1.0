@@ -6,9 +6,9 @@ const authenticateToken = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
       if (err) {
-        console.log(err);
         res.redirect("/api/v1/auth/login");
       } else {
+        req.user = data;
         next();
       }
     });

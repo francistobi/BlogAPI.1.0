@@ -61,7 +61,7 @@ const login_post = async (req, res) => {
 };
 const logout = async (req, res) => {
   res.clearCookie("jwt");
-  res.render("home")
+  res.render("login")
 };
 module.exports = {
   signup_get,
