@@ -29,6 +29,10 @@ const blogRoute = require("./route/blog.route")
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/blog", blogRoute);
 
+app.get("/", (req, res) => {
+  console.log("welcome");
+  res.render("register");
+});
 
 app.use(notFound);
 app.use(errorMiddleware);
