@@ -58,7 +58,7 @@ const login_post = async (req, res) => {
     console.log(err);
     res.status(400).redirect("/api/v1/auth/login");
   }
-};
+}
 const logout = async (req, res) => {
   res.clearCookie("jwt");
   res.render("login")

@@ -23,6 +23,9 @@
             <form action="/api/v1/blog/<%=article.id%>?_method=DELETE" method="POST">
               <button class="del" type="submit" style="color: rgb(161, 12, 57); border: 2px solid rgb(161, 12, 57);"> Delete </button>
             </form>
+            <form action="/api/v1/blog/publish/<%=article.id%>?_method=PUT" method="PUT">
+              <button class="pub" type="submit" style="color: rgb(161, 12, 57); border: 2px solid rgb(161, 12, 57);"> publish </button>
+            </form>
           </div>
         </div>
       <% }) %>
