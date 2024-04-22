@@ -45,7 +45,7 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 20;
   const totalBlogs = await Blog.countDocuments();
   const totalPages = Math.ceil(totalBlogs / limit);
-  const publishedBlog = await Blog.find({ state: "Published" })
+  const publishedBlog = await Blog.find({ state: "published" })
     .skip((page - 1) * limit)
     .limit(limit);
 
@@ -55,12 +55,6 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
     return next(createCustomError(`No published blogs`, error.status));
   }
  res.render("published", { articles: publishedBlog });
-//  res.status(200).json({
-//    publishedBlog,
-//    page,
-//    totalBlogs,
-//    totalPages,
-//  });
 });
 
 const createBlog = asyncWrapper(async (req, res) => {
@@ -247,7 +241,7 @@ const sortBlog = asyncWrapper(async (req, res, next) => {
 const publishedBlog = asyncWrapper(async (req, res, next) => {
   const blogid = req.params.id;
   const published = await Blog.findByIdAndUpdate(blogid, {
-    state: "Published",
+    state: "published",
   });
   if (!published) {
     const error = new Error();
@@ -256,7 +250,6 @@ const publishedBlog = asyncWrapper(async (req, res, next) => {
   }
   res.status(200).json({ message: "Blog published successfully", published });
 });
-
 module.exports = {
   getDraftBlog,
   getBlogs,
