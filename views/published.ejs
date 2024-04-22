@@ -2,7 +2,7 @@
 <div class="homesection">
   <div class="innersection">
     <nav>
-      <img src="/logo.png" alt="logo" class="logo">
+      <img src="/logo.png" alt="logo" class="logo" />
       <ul>
         <li><a href="/api/v1/auth/logout">Log Out</a></li>
       </ul>
@@ -10,15 +10,22 @@
     <div class="middiv">
       <div class="box noborder">
         <h1 class="books">BOOKS</h1>
-        <a href="/api/v1/blog/new" class="new">Create new article</a>
+        <a href="/api/v1/blog/n" class="new">Create new article</a>
       </div>
       <% articles.forEach(article => { %>
-        <div class="box">
-          <h2><%= article.title %> by  <%= article.author%> <span>< <%= article.state%> ></span></h2>
-          <h3><%= article.description %></h3>
-          <h4><%= article.timestamp.toLocaleDateString()%></h4>
-          <a href="/api/v1/blog/<%=article.id%>" style="color: blue; border: 2px solid blue;">Read more</a>
-        </div>
+      <div class="box">
+        <h2>
+          <%= article.title %> by <%= article.author%>
+          <span>< <%= article.state%> ></span>
+        </h2>
+        <h3><%= article.description %></h3>
+        <h4><%= article.timestamp.toLocaleDateString()%></h4>
+        <a
+          href="/api/v1/blog/<%=article.id%>"
+          style="color: blue; border: 2px solid blue"
+          >Read more</a
+        >
+      </div>
       <% }) %>
     </div>
   </div>

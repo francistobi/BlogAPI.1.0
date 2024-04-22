@@ -48,25 +48,26 @@ const getBlogs = asyncWrapper(async (req, res, next) => {
   const publishedBlog = await Blog.find({ state: "Published" })
     .skip((page - 1) * limit)
     .limit(limit);
-  res.render("published", { articles: publishedBlog });
+
   if (!publishedBlog) {
     const error = new Error();
     error.status = 400;
-    return next(createCustomError(`no published blogs`, error.status));
+    return next(createCustomError(`No published blogs`, error.status));
   }
-  res.json({
-    publishedBlog,
-    currentPage: page,
-    totalPages: totalPages,
-    totalBlogs: totalBlogs,
-  });
+ res.render("published", { articles: publishedBlog });
+//  res.status(200).json({
+//    publishedBlog,
+//    page,
+//    totalBlogs,
+//    totalPages,
+//  });
 });
+
 const createBlog = asyncWrapper(async (req, res) => {
   const { title, description, body, tags } = req.body;
   const user = req.user.id;
 
   const read_time = Math.ceil(body.length / AVERAGE_WORDS_PER_MINUTE);
-  const authorName = req.body.author.split(" ");
   const author = await UserModel.findOne({ _id: user });
   const Author = author._id;
   if (!author) {
@@ -129,7 +130,7 @@ const getByTitle = asyncWrapper(async (req, res, next) => {
 const getByTags = asyncWrapper(async (req, res, next) => {
   const tag = req.query.tag;
   const blogs = await Blog.find({ tags: tag });
-  if (!blogs || blogs.length === 0) {
+  if (!blogs) {
     const error = new Error();
     error.status = 404;
     return next(
