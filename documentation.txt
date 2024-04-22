@@ -8,8 +8,8 @@ The Blog Router module defines the routes for accessing various functionalities 
 
 ## Endpoints
 
-### GET /api/v1/blog
-- **Description:** Retrieves published blogs.
+### GET /api/v1/blog/all
+- **Description:** Retrieves all published blogs.
 - **Query Parameters:**
   - `page`: Specifies the page number of the results (default: 1).
   - `limit`: Specifies the number of blogs per page (default: 20).
@@ -88,6 +88,11 @@ The Blog Router module defines the routes for accessing various functionalities 
   - `tags`: Updated tags associated with the blog.
 - **Response:** Redirects to the edit form for the updated blog.
 
+### PUT /api/v1/blog/publish/:id
+- **Description:** Publishes an existing draft blog.
+- **Authentication:** Required (Bearer token).
+- **Response:** Redirects to the list of blogs after successful publication.
+
 ### GET /api/v1/blog/edit/:id
 - **Description:** Renders a view template for editing an existing blog.
 - **Authentication:** Required (Bearer token).
@@ -96,6 +101,3 @@ The Blog Router module defines the routes for accessing various functionalities 
 - **Description:** Deletes an existing blog.
 - **Authentication:** Required (Bearer token).
 - **Response:** Redirects to the list of blogs after successful deletion.
-
-## Conclusion
-The Blog Router module provides endpoints for managing blogs within the application. These endpoints allow users to perform CRUD operations on blogs and retrieve blog-related information.
